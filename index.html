@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>YAValidator: примеры и тесты</title>
+        <style>
+            input, select, button {
+                width: 200px;
+            }
+            label {
+                display: block;
+                margin: 8px;
+            }
+            .invalid-element {
+                outline: solid red 2px;
+                background-color: lightpink;
+            }
+        </style>
+        <script src="js/yavalidator.min.js"></script>
+        <script>
+            var validator1;
+            var validator2;
+            //
+            function init() {
+                // Validation group 1
+                // "yav-group1"         - определяет группу элементов для валидации
+                // "invalid-element"    - класс, который назначается для элементов не прошедших валидацию
+                validator1 = new YAValidator("yav-group1", "invalid-element", {
+                    "disabled":     false,              // проверять значения элементов с атрибутом "disabled"
+                    "readonly":     false,              // проверять значения элементов с атрибутом "readonly"
+                    "hidden":       false,              // проверять значения невидимых элементов
+                    "onedit":       false               // проверять значения элементов в процессе редактирования
+                });
+                //
+                // Validation group 1
+                // "yav-group2"         - определяет группу элементов для валидации
+                // "invalid-element"    - класс, который назначается для элементов не прошедших валидацию
+                validator2 = new YAValidator("yav-group2", "invalid-element", {
+                    "disabled":     false,              // проверять значения элементов с атрибутом "disabled"
+                    "readonly":     false,              // проверять значения элементов с атрибутом "readonly"
+                    "hidden":       false,              // проверять значения невидимых элементов
+                    "onedit":       true                // проверять значения элементов в процессе редактирования
+                }, function(changed, valid, data) {
+                    // вызывается при изменение значений элементов
+                    document.getElementById('changed2').innerHTML = changed?'YES':'NO';
+                    document.getElementById('valid2').innerHTML = valid?'YES':'NO';
+                });
+                validator2.fixData();
+            }
+            //
+            function validate1() {
+                var res = validator1.validate();
+                if(res) alert('Ok!!!'); else alert('Есть ошибки');
+            }
+            function getData1() {
+                var res = validator1.getData('edit_');
+                alert(JSON.stringify(res, null, 2));
+            }
+            function setData1() {
+                var data = {
+                    "number":       Math.floor(Math.random() * 100),
+                    "req_number":   Math.floor(Math.random() * 100),
+                    "range":        Math.floor(Math.random() * 100),
+                    "url":          "www.aaa.com",
+                    "req_url":      "www.bbb.com",
+                    "email":        "test@test.com",
+                    "tel":          "+7(495)111-11-11",
+                    "text":         "Text 1",
+                    "req_text":     "Text 2",
+                    "radio":        "1",
+                    "pattern":      "Hello",
+                    "req_pattern":  "Hello",
+                    "ip":           "192.168.1.1",
+                    "req_ip":       "192.168.1.2",
+                    "hostname":     "test-host-name1",
+                    "req_hostname": "test-host-name2",
+                    "select":       "2",
+                    "inn":          "7722065352",
+                    "snils":        "",
+                    "cb": false
+                };
+                validator1.setData(data, 'edit_');
+            }
+            //
+            //
+            function validate2() {
+                var res = validator2.validate();
+                if(res) alert('Ok!!!'); else alert('Есть ошибки');
+            }
+            function getData2() {
+                var res = validator2.getData('edit_');
+                alert(JSON.stringify(res, null, 2));
+            }
+            function restore2() {
+                validator2.restoreData();
+            }
+        </script>
+    </head>
+    <body onload="init()">
+        <h1>YAValidator &equiv; Yet Another Validator</h1>
+        <!-- ГРУППА 1 -->
+        <h2>Примеры и тесты 1 (проверка при вызове метода)</h2>
+        <table>
+            <tr>
+                <td>
+                    <label>
+                        <input class="yav-group1" id="edit_number" type="number" min="1" max="100">
+                        Number (1..100)
+                    </label>
+                    <label>
+                        <input class="yav-group1" id="edit_req_number" type="number" min="1" max="100" required>
+                        Required Number  (1..100)
+                    </label>
+                    <label>
+                        <input class="yav-group1" id="edit_range" type="range" min="1" max="100">
+                        Range (1..100)
+                    </label>
+                    <label>
+                        <input class="yav-group1" id="edit_url" type="url">
+                        Url
+                    </label>
+                    <label>
+                        <input class="yav-group1" id="edit_req_url" type="url" required>
+                        Required Url
+                    </label>
+                    <label>
+                        <input class="yav-group1" id="edit_email" type="email">
+                        Email
+                    </label>
+                    <label>
+                        <input class="yav-group1" id="edit_tel" type="tel">
+                        Phone
+                    </label>
+                    <label>
+                        <input class="yav-group1" id="edit_text" type="text">
+                        Any Text
+                    </label>
+                    <label>
+                        <input class="yav-group1" id="edit_req_text" type="text" required>
+                        Required any text
+                    </label>
+                    <div>
+                        <label>Radio buttons:</label>
+                        <input class="yav-group1" type="radio" name="edit_radio" value="0" checked>0<br>
+                        <input class="yav-group1" type="radio" name="edit_radio" value="1">1<br>
+                        <input class="yav-group1" type="radio" name="edit_radio" value="2">2
+                    </div>
+                </td>
+                <td>
+                    <label>
+                        <input class="yav-group1 yav-inn" id="edit_inn" type="text">
+                        ИНН
+                    </label>
+                    <label>
+                        <input class="yav-group1 yav-snils" id="edit_snils" type="text">
+                        СНИЛС
+                    </label>
+                    <label>
+                        <input class="yav-group1" id="edit_pattern" type="text" pattern="^(Hello)$">
+                        Pattern: /^(Hello)$/
+                    </label>
+                    <label>
+                        <input class="yav-group1" id="edit_req_pattern" type="text" pattern="^(Hello)$" required>
+                        Required Pattern: /^(Hello)$/
+                    </label>
+                    <label>
+                        <input class="yav-group1 yav-ip" id="edit_ip" type="text">
+                        IP
+                    </label>
+                    <label>
+                        <input class="yav-group1 yav-ip" id="edit_req_ip" type="text" required>
+                        Required IP
+                    </label>
+                    <label>
+                        <input class="yav-group1 yav-hostname" id="edit_hostname" type="text">
+                        Hostname
+                    </label>
+                    <label>
+                        <input class="yav-group1 yav-hostname" id="edit_req_hostname" type="text" required>
+                        Required hostname
+                    </label>
+                    <label>
+                        <select class="yav-group1" id="edit_select">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                        </select>
+                        Select (только значение без валидации)
+                    </label>
+                    <label>
+                        <input class="yav-group1" id="edit_cb" type="checkbox">
+                        CheckBox (только значение без валидации)
+                    </label>
+                </td>
+            </tr>
+        </table>
+        <br>
+        <button onclick="validate1()">Validate 1</button>
+        <button onclick="validator1.invalidate();">Invalidate 1</button>
+        <button onclick="getData1()">Get Data 1</button>
+        <button onclick="setData1()">Set Data 1</button>
+        <button onclick="validator1.restoreData();">Restore Data 1</button>
+        <!-- ГРУППА 2 -->
+        <h2>Примеры и тесты 2 (проверка при вводе)</h2>
+        <table>
+            <tr>
+                <td>
+                    <label>
+                        <input class="yav-group2" id="edit_number2" type="number" min="1" max="100">
+                        Number (1..100)
+                    </label>
+                    <label>
+                        <input class="yav-group2" id="edit_url2" type="url">
+                        Url
+                    </label>
+                    <label>
+                        <input class="yav-group2" id="edit_email2" type="email">
+                        Email
+                    </label>
+                    <label>
+                        <input class="yav-group2" id="edit_tel2" type="tel">
+                        Phone
+                    </label>
+                    <label>
+                        <input class="yav-group2" id="edit_req_text2" type="text" required>
+                        Required any text
+                    </label>
+                </td>
+                <td>
+                    <label>
+                        <input class="yav-group2" id="edit_pattern2" type="text" pattern="^(Hello)$">
+                        Pattern: /^(Hello)$/
+                    </label>
+                    <label>
+                        <input class="yav-group2 yav-ip" id="edit_ip2" type="text">
+                        IP
+                    </label>
+                    <label>
+                        <input class="yav-group2 yav-hostname" id="edit_hostname2" type="text">
+                        Hostname
+                    </label>
+                </td>
+            </tr>
+        </table>
+        <br>
+        <button onclick="validate2()">Validate 2</button>
+        <button onclick="validator2.invalidate();">Invalidate 2</button>
+        <button onclick="getData2()">Get Data 2</button>
+        <button onclick="validator2.fixData();">Fix Data 2</button>
+        <button onclick="validator2.restoreData();">Restore Data 2</button>
+        <br><br>
+        Data Changed 2:<span id="changed2"></span><br>
+        Data Valid 2:<span id="valid2"></span>
+    </body>
+</html>
